@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Word Guess</title>
+</head>
+
+<body>
+
+    <h1>Word Guess Game!</h1>
+
+    <p id="masked-word"></p>
+    <p id="number-of-wins"></p>
+    <p id="used-letters"></p>
+
+    <script>
+        var userInput = "";
+        var game = {
+            maskedWord: "_",
+            secretWord: " ",
+            numberOfWins: 0,
+            usedLetters: " ",
+            usersLetter: " ",
+
+            startNewGame: function () {
+
+                this.secretWord = "Pizza";
+                this.maskedWord = "_____";
+                this.usedLetters = "";
+
+                this.secretWord = this.secretWord.toLowerCase();
+
+                document.querySelector("#masked-word").innerHTML = this.maskedWord;
+                document.querySelector("#number-of-wins").innerHTML = this.numberOfWins;
+                document.querySelector("#used-letters").innerHTML = this.usedLetters;
+                console.log("The secret word is", this.secretWord)
+            },
+            refreashGame: function () {
+                document.querySelector("#masked-word").innerHTML = this.maskedWord;
+                document.querySelector("#number-of-wins").innerHTML = this.numberOfWins;
+                document.querySelector("#used-letters").innerHTML = this.usedLetters;
+            },
+            checkWordForLetter() {
+
+                // ------------------------------------------------------------------------
+                // Does this.usersLetter appear anywhere in this.secretWord 
+                // 1. Use indexOf to search for the position of the letter in the word
+                // 2. if the indexOf is -1, that means the letter was not found in the word
+                // ------------------------------------------------------------------------
+                console.log("this.usersLetter is", this.usersLetter);
+                if (this.secretWord.indexOf(this.usersLetter) == -1) {
+                    console.log("The letter", this.usersLetter, "is not in the word", this.secretWord);
+                } else {
+                    console.log("The word", this.secretWord, "has a", this.usersLetter);
+                    // --------------------------------
+                    // Increase the number of wins by 1
+                    // --------------------------------
+                    this.numberOfWins = this.numberOfWins + 1;
+
+                    // -------------------------------------------------------------------------------
+                    // Check all the letter in the word to see if they match the users word
+                    // If we get a match, update the masked word to show the correctly guessed letters
+                    // -------------------------------------------------------------------------------
+                    for (var i = 0; i < this.secretWord.length; i++) {
+
+                        if (this.usersLetter == this.secretWord.charAt(i).toLowerCase()) {
+                            console.log("The letter", this.secretWord.charAt(i), "was found at ", i)
+                            this.maskedWord = this.maskedWord.substring(0, i) +
+                                this.usersLetter.toUpperCase() +
+                                this.maskedWord.substring(i + 1);
+                        } else {
+                            console.log("The letter", this.usersLetter, "does not equal", this.secretWord.charAt(i)
+                                .toLowerCase(), "at", i)
+                        }
+                    }
+
+
+                };
+                this.usedLetters = this.usedLetters + " " + this.usersLetter.toUpperCase()
+
+            }
+        };
+
+        game.startNewGame();
+
+        document.onkeyup = function (event) {
+            userInput = event.key.toLowerCase();
+            console.log("User input was", userInput);
+            game.usersLetter = userInput;
+
+            game.checkWordForLetter();
+            game.refreashGame();
+        };
+
+        //   var possibleWords = [
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false } 
+        //    ];
+    </script>
+
+</body>
+
+</html>

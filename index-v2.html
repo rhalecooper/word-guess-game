@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Word Guess</title>
+</head>
+
+<body>
+
+    <h1>Word Guess Game!</h1>
+
+    <p id="message-for-user"></p>
+    <p id="number-of-wins"></p>
+    <p id="masked-word"></p>
+    <p id="remaining-guesses"></p>
+    <p id="used-letters"></p>
+
+    <script>
+        var userInput = "";
+        var game = {
+            maskedWord: "_",
+            secretWord: " ",
+            numberOfWins: 0,
+            usedLetters: " ",
+            usersLetter: " ",
+            messageForUser: " ",
+            guessesRemaining: 0,
+
+            startNewGame: function () {
+
+                this.messageForUser = "Press any key to get started!";
+                this.secretWord = "Pizza";
+                this.maskedWord = "_____";
+                this.usedLetters = "";
+                this.guessesRemaining = this.secretWord.length * 2;
+
+                this.secretWord = this.secretWord.toLowerCase();
+                console.log("The secret word is", this.secretWord)
+            },
+
+            refreshGame: function () {
+                var winsText  = "Number of wins: " + this.numberOfWins.toString();
+                var guessText = "Guesses remaining: " + this.guessesRemaining.toString();
+                var wordText  = "Secret word: ";
+                for (var i = 0; i < this.secretWord.length; i++) {
+                    wordText = wordText + "&nbsp;&nbsp;"  + this.maskedWord.charAt(i);
+                }
+                document.querySelector("#message-for-user").innerHTML = this.messageForUser;
+                document.querySelector("#masked-word").innerHTML = wordText;
+                document.querySelector("#number-of-wins").innerHTML = winsText;
+                document.querySelector("#used-letters").innerHTML = this.usedLetters;
+                document.querySelector("#remaining-guesses").innerHTML = guessText;
+            },
+
+            checkWordForLetter() {
+
+                // ------------------------------------------------------------------------
+                // Does this.usersLetter appear anywhere in this.secretWord 
+                // 1. Use indexOf to search for the position of the letter in the word
+                // 2. if the indexOf is -1, that means the letter was not found in the word
+                // ------------------------------------------------------------------------
+
+                if (this.usedLetters.toLowerCase().indexOf(this.usersLetter) > -1) {
+                    console.log("The letter", this.usersLetter, "is already in ", this.usedLetters);
+                    return;
+                } else {
+                    this.usedLetters = this.usedLetters + " " + this.usersLetter.toUpperCase();
+                    this.guessesRemaining = this.guessesRemaining - 1;
+                };
+
+                if (this.secretWord.indexOf(this.usersLetter) == -1) {
+                    console.log("The letter", this.usersLetter, "is NOT in the word", this.secretWord);
+
+                } else {
+
+                    console.log("The letter", this.usersLetter, "IS in the word", this.secretWord);
+                    // -------------------------------------------------------------------------------
+                    // Check all the letter in the word to see if they match the users word
+                    // If we get a match, update the masked word to show the correctly guessed letters
+                    // -------------------------------------------------------------------------------
+                    for (var i = 0; i < this.secretWord.length; i++) {
+
+                        if (this.usersLetter == this.secretWord.charAt(i)) {
+                            // console.log("The letter", this.secretWord.charAt(i), "was found at ", i)
+                            console.log("The letter", this.usersLetter, "does equal the", this.secretWord.charAt(i),
+                                "at", i)
+
+                            this.maskedWord = this.maskedWord.substring(0, i) +
+                                this.usersLetter.toUpperCase() +
+                                this.maskedWord.substring(i + 1);
+                        } else {
+                            console.log("The letter", this.usersLetter, "does not equal", this.secretWord.charAt(i),
+                                "at", i)
+                        };
+                    };
+
+                    // check to see if user has guessed all the letters
+                    if (this.maskedWord.toLowerCase() == this.secretWord.toLowerCase()) {
+                        console.log("User has won the game", this.maskedWord.toLowerCase(), "=", this.secretWord.toLowerCase())
+                        this.numberOfWins = this.numberOfWins + 1;
+                        this.startNewGame();
+                        this.refreshGame();
+                    }
+                };
+                // check to see if player has used up all thier guesses
+                if (this.guessesRemaining < 1) {
+                    console.log("User has lost the game", this.maskedWord.toLowerCase(), "!=", this.secretWord.toLowerCase())
+                    this.startNewGame();
+                    this.refreshGame();
+                };
+            }
+        };
+
+        game.startNewGame();
+        game.refreshGame();
+
+        document.onkeyup = function (event) {
+            userInput = event.key.toLowerCase();
+            console.log("User input was", userInput);
+            game.usersLetter = userInput;
+
+            game.checkWordForLetter();
+            game.refreshGame();
+        };
+
+        //   var possibleWords = [
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false },
+        //       { w: "Pizza", used: false } 
+        //    ];
+    </script>
+
+</body>
+
+</html>
